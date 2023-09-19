@@ -1,0 +1,38 @@
+#============================#
+# 项目local本地环境相关配置
+#============================#
+
+spring:
+  # 邮件配置
+  mail:
+    # 邮件服务器地址
+    host: smtp.qiye.aliyun.com
+    # 你的邮箱地址
+    username: xxxx
+    # 你的邮箱地址授权码
+    password: xxxx
+    # 编码格式
+    default-encoding: utf-8
+    # 协议
+    protocol: smtps
+    port: 465
+    properties:
+      mail:
+        smtp:
+          socketFactory:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+#============================#
+# 自定义 配置
+#============================#
+iphone:
+  listen:
+    # 定时任务监听有货时间间隔(四秒执行一次)
+    corn: "*/4 * * * * *"
+    # 是否自动发送邮件通知
+    autoMail: false
+    # 是否自动执行python脚本
+    autoPy: false

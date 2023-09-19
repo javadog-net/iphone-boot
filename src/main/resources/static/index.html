@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>iphone有货通知订阅</title>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui-v2.5.6/css/layui.css" />
+    <script src="https://www.layuicdn.com/layui-v2.5.6/layui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/layer/2.3/layer.js"></script>
+    <style>
+        .layui-tab{
+            width: 800px;
+            margin: 0 auto;
+            margin-top: 5%;
+        }
+    </style>
+    <script>
+        layui.use('element', function(){
+            var element = layui.element;
+        });
+
+    </script>
+</head>
+<body>
+<div class="layui-tab">
+    <h2 style="text-align: center; padding: 30px;">iphone有货通知订阅</h2>
+    <ul class="layui-tab-title">
+        <li class="layui-this">测试邮箱连通</li>
+        <li>有货订阅监听</li>
+        <li>有货消息列表</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="" id="mail" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">测试发送</label>
+                    <div class="layui-input-block">
+                        <a class="layui-btn layui-btn-sm" onclick="send()">发送</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="" id="topicMail" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">选择产品</label>
+                    <div class="layui-input-block">
+                        <select id="model">
+                            <option value="">请选择</option>
+                            <option value="MU2Q3CH/A">iPhone 15 Pro Max256GB 原色钛金属</option>
+                            <option value="MU2V3CH/A">iPhone 15 Pro Max512GB 原色钛金属</option>
+                            <option value="MU603CH/A">iPhone 15 Pro Max 1TB 原色钛金属</option>
+
+                            <option value="MU2R3CH/A">iPhone 15 Pro Max256GB 蓝色钛金属</option>
+                            <option value="MU2W3CH/A">iPhone 15 Pro Max512GB 蓝色钛金属</option>
+                            <option value="MU613CH/A">iPhone 15 Pro Max 1TB 蓝色钛金属</option>
+
+                            <option value="MU2P3CH/A">iPhone 15 Pro Max256GB 白色钛金属</option>
+                            <option value="MU2U3CH/A">iPhone 15 Pro Max512GB 白色钛金属</option>
+                            <option value="MU2Y3CH/A">iPhone 15 Pro Max 1TB 白色钛金属</option>
+
+                            <option value="MU2N3CH/A">iPhone 15 Pro Max256GB 黑色钛金属</option>
+                            <option value="MU2T3CH/A">iPhone 15 Pro Max512GB 黑色钛金属</option>
+                            <option value="MU2X3CH/A">iPhone 15 Pro Max 1TB 黑色钛金属</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地区</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="" id="location" placeholder="请输入苹果网页针对地址如山东 青岛 市南区" autocomplete="off" class="layui-input">
+                        <p>请注意格式空格：参考<span style="color: red; font-weight: bold">官网</span>如：山东 青岛 市南区</p>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">订阅</label>
+                    <div class="layui-input-block">
+                        <a class="layui-btn layui-btn-sm" onclick="topic()">点击订阅</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="layui-tab-item">
+            <p style="color: red">仅展示近10条信息, 每10秒自动刷新</p>
+            <button type="button" class="layui-btn" onclick="record()" style="margin-top: 10px;">刷新</button>
+            <table class="layui-hide" id="ID-table-demo-data"></table>
+        </div>
+    </div>
+</div>
+<script>
+    const baseUrl = 'http://localhost:80/iphone/v1';
+
+    layui.use('form', function(){
+        //只有执行了这一步，部分表单元素才会自动修饰成功
+        var form = layui.form;
+        form.render();
+    });
+    // 发送邮件测试
+    function send(){
+        let param = {
+            toMail : $("#mail").val()
+        }
+        layer.alert("正在发送......")
+        $.ajax({
+            url: `${baseUrl}/mail/test`,
+            dataType: "json",
+            contentType: 'application/json',
+            type: "post",
+            data:JSON.stringify(param),
+            success:function(res){
+               if(!res.success){
+                   layer.alert(res.message,{icon:2})
+                   return
+               }
+                layer.alert("邮件已发送成功,请查收",{icon:1})
+            },
+            error:function(){
+                console.log('failed!');
+            },
+        });
+    }
+    // 订阅
+    function topic(){
+        let param = {
+            mail: $("#topicMail").val(),
+            model: $("#model").val(),
+            location: $("#location").val(),
+        }
+        layer.alert("正在订阅......",{icon:1})
+        $.ajax({
+            url: `${baseUrl}/iphone/topic`,
+            dataType: "json",
+            contentType: 'application/json',
+            type: "post",
+            data:JSON.stringify(param),
+            success:function(res){
+                if(!res.success){
+                    layer.alert(res.message,{icon:2})
+                    return;
+                }
+                layer.alert("已订阅成功,请关注邮箱，切勿归置于垃圾邮件！",{icon:1})
+            },
+            error:function(){
+                console.log('failed!');
+            },
+        });
+    }
+    // 记录
+    function record(){
+        $.ajax({
+            url: `${baseUrl}/record/list`,
+            dataType: "json",
+            contentType: 'application/json',
+            type: "get",
+            success:function(res){
+                debugger
+                if(!res.success){
+                    layer.alert(res.message,{icon:2})
+                }
+                table(res.data)
+            },
+            error:function(){
+                console.log('failed!');
+            },
+        });
+    }
+    // 表格
+    function table(data){
+        console.log('data=', data)
+        layui.use('table', function(){
+            var table = layui.table;
+            // 已知数据渲染
+            table.render({
+                elem: '#ID-table-demo-data',
+                cols: [[ //标题栏
+                    {field: 'model', title: '型号', width: 380},
+                    {field: 'region', title: '地区', width: 180},
+                    {field: 'createTime', title: '时间', minWidth: 100}
+                ]],
+                data: data,
+                limit: 10
+            });
+        });
+    }
+    // 初始化
+    function init(){
+        this.record();
+    }
+    this.init();
+
+    setInterval(()=>{
+        record();
+    },10000)
+</script>
+</body>
+</html>

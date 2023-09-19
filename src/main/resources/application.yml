@@ -1,0 +1,184 @@
+#============================#
+# Project 配置
+#============================#
+# 产品或项目名称
+productName: 苹果手机自动化抢购
+# 版本
+productVersion: V1.0
+# 版权年份
+copyrightYear: 2023
+# 软件开发者
+developer: JavaDog
+# 软件开发者
+blog: https://www.javadog.net
+
+
+#============================#
+# server 配置
+#============================#
+server:
+  # 端口
+  port: 80
+  tomcat:
+    # url编码
+    uri-encoding: utf-8
+    # 设置tomcat允许的http header最大值
+    max-http-header-size: 5MB
+  servlet:
+    context-path: /iphone/v1
+
+#============================#
+# spring 配置
+#============================#
+spring:
+  application:
+    # 应用名
+    name: apple
+  profiles:
+    # 激活环境
+    active: dev
+  resources:
+    static-locations: classpath:/static/, classpath:/templates/
+  thymeleaf:
+    prefix:
+      classpath: /templates   # 访问template下的html文件需要配置模板，映射
+    cache: false              # 开发时关闭缓存,不然没法看到实时页面
+  aop:
+    # 该属性值默认为false,表示使用JDK动态代理织入增强;当值为true时,表示使用CGLib动态代理织入增强;但是,即使设置为false,如果目标类没有生命接口,则Spring将自动使用CGLib动态代理.
+    proxy-target-class: true
+  jackson:
+    # 日期统一格式化
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  datasource:
+    # 数据源类型
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 数据驱动
+    driverClassName: com.mysql.cj.jdbc.Driver
+    # url
+    url: jdbc:mysql://localhost:3306/db_iphone?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    # 用户名
+    username: root
+    # 密码
+    password: root
+    # Druid连接池监控
+    druid:
+      # 初始化时建立物理连接的个数。初始化发生在显示调用init方法，或者第一次getConnection时
+      initial-size: 1
+      # 最小连接池数量
+      min-idle: 3
+      # 最大连接池数量
+      max-active: 20
+      # 获取连接时最大等待时间，单位毫秒。配置了maxWait之后，缺省启用公平锁，并发效率会有所下降，如果需要可以通过配置useUnfairLock属性为true使用非公平锁。
+      max-wait: 10000
+      # 属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：监控统计用的filter:stat日志用的filter:log4j防御sql注入的filter:wall
+      filters: stat,wall,slf4j
+      # WebStatFilter用于采集web-jdbc关联监控的数据
+      web-stat-filter:
+        # 是否开启
+        enabled: true
+      # 配置stat-view-servlet
+      stat-view-servlet:
+        # 是否开启
+        enabled: true
+        # 匹配路径
+        url-pattern: /druid/*
+        # 用户名
+        login-username: admin
+        # 密码
+        login-password: 123456
+        # 放行IP(为空则全放行，优先级以禁用IP)
+        allow: xx.xx.xx.xx
+        # 禁用IP
+        deny:
+  servlet:
+    multipart:
+      # 单文件上传限制大小
+      max-file-size: 100MB
+      # 总上传数据总大小
+      max-request-size: 100MB
+  # 邮件配置
+  mail:
+    # 邮件服务器地址
+    host: smtp.qiye.aliyun.com
+    # 你的邮箱地址
+    username: xxxx
+    # 授权码
+    password: xxxx
+    # 编码格式
+    default-encoding: utf-8
+    # 协议
+    protocol: smtps
+    port: 465
+    properties:
+      mail:
+        smtp:
+          socketFactory:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+#============================#
+# mybatisplus 配置
+#============================#
+mybatis-plus:
+  # xml扫描，多个目录用逗号或者分号分隔（告诉 Mapper 所对应的 XML 文件位置）
+  mapper-locations: classpath:mapper/*.xml
+  # 以下配置均有默认值,可以不设置
+  global-config:
+    db-config:
+      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: auto
+      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
+      field-strategy: NOT_EMPTY
+      #数据库类型
+      db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#============================#
+# logging 配置
+#============================#
+logging:
+  level:
+    root: info
+  file:
+    path: /root/javadog/iphone/logs/${spring.application.name}/
+    name: ${spring.application.name}
+  logback:
+    rollingpolicy:
+      max-history: 7
+      max-file-size: 10MB
+
+#============================#
+# file 配置
+#============================#
+file:
+  # 静态附件前缀
+  static-prefix: attach
+  # 上传的文件对外暴露的访问路径
+  access-path-pattern: /${file.static-prefix}/**
+  # 文件上传目录
+  upload-folder: D://javadog
+  # 文件预览、下载的访问路径前缀
+  access-prefix-url: http://localhost:${server.port}/${server.servlet.context-path}/${file.static-prefix}
+  # 文件上传最大
+  max-post-size: 10
+
+#============================#
+# 自定义 配置
+#============================#
+iphone:
+  listen:
+    # 定时任务监听有货时间间隔(四秒执行一次)
+    corn: "*/4 * * * * *"
+    # 是否自动发送邮件通知
+    autoMail: false
+    # 是否自动执行python脚本
+    autoPy: false
