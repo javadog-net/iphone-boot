@@ -153,7 +153,7 @@ public class IphoneServiceImpl extends ServiceImpl<IphoneMapper, IphoneEntity> i
             JSONObject compactDefault = messageTypesDefault.getJSONObject("compact");
             String storePickupQuote = compactDefault.getStr("storePickupQuote");
             log.info("storePickupQuote={}",storePickupQuote);
-        } else if(!"unavailable".equals(pickupDisplay)){
+        } else if(!"unavailable".equals(pickupDisplay) && !"ineligible".equals(pickupDisplay)){
             log.info("有货,model={},title={}",model,storePickupProductTitle);
             // 存入有货记录
             this.saveRecord(storeName, storePickupProductTitle);
